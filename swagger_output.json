@@ -7,7 +7,9 @@
   },
   "host": "localhost:3000",
   "basePath": "/",
-  "schemes": ["http"],
+  "schemes": [
+    "http"
+  ],
   "paths": {
     "/health": {
       "get": {
@@ -30,6 +32,31 @@
           },
           {
             "name": "createdAt",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/products/v2": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "cursor",
             "in": "query",
             "type": "string"
           },

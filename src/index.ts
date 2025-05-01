@@ -1,6 +1,6 @@
 import { type Request, type Response, type Application } from "express";
 import express from "express";
-import { nextProducts, nextUsers } from "@/lib/queries";
+import { nextProducts, nextProductsV2, nextUsers } from "@/lib/queries";
 import swaggerUi from "swagger-ui-express";
 import swaggerFile from "../swagger_output.json";
 import cors from "cors";
@@ -25,6 +25,30 @@ app.get("/products", async (req: Request, res: Response) => {
 
     const { data, nextCursor, hasNext } = await nextProducts(
       { id: productId, createdAt: createdAt },
+      pageSize,
+    );
+
+    res.status(200).json({
+      data: data,
+      nextCursor: nextCursor,
+      hasNext: hasNext,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error,
+    });
+  }
+});
+
+app.get("/products/v2", async (req: Request, res: Response) => {
+  try {
+    const { cursor, pageSize } = req.query as {
+      cursor?: string;
+      pageSize?: string;
+    };
+
+    const { data, nextCursor, hasNext } = await nextProductsV2(
+      cursor,
       pageSize,
     );
 
