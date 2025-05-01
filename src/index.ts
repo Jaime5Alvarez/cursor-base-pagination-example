@@ -1,37 +1,13 @@
 import { type Request, type Response, type Application } from "express";
 import express from "express";
-import { DatabaseServiceFactory } from "./modules/database/application/database-factory";
-import * as schema from "./modules/database/infrastructure/drizzle/schema";
-import { eq, and, gt, or, asc } from "drizzle-orm";
-const db = DatabaseServiceFactory().getConnection();
-const nextProducts = async (
-  cursor?: {
-    id: string;
-    createdAt: Date;
-  },
-  pageSize: number = 5
-) => {
-  const query = db
-    .select()
-    .from(schema.products)
-    .where(
-      cursor
-        ? or(
-            gt(schema.products.createdAt, cursor.createdAt),
-            and(
-              eq(schema.products.createdAt, cursor.createdAt),
-              gt(schema.products.id, cursor.id)
-            )
-          )
-        : undefined
-    )
-    .limit(pageSize)
-    .orderBy(asc(schema.products.createdAt), asc(schema.products.id));
+import { nextProducts } from "@/lib/queries";
+import swaggerUi from "swagger-ui-express";
+import swaggerFile from "../swagger_output.json";
 
-  return await query;
-};
 const app: Application = express();
 app.use(express.json());
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.get("/health", (req: Request, res: Response) => {
   res.send("OK");
