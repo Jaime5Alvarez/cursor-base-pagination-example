@@ -19,25 +19,17 @@ app.get("/products", async (req: Request, res: Response) => {
       productId?: string;
       createdAt?: string;
       pageSize?: string;
-  };
-  
-  let cursor = undefined;
-  if (productId && createdAt) {
-    cursor = {
-      id: productId,
-      createdAt: new Date(createdAt),
     };
-  }
-  let pageSizeNumber = undefined;
-  if (pageSize) {
-    pageSizeNumber = Number(pageSize);
-  }
 
-  const data = await nextProducts(cursor, pageSizeNumber);
+    const { data, nextCursor, hasNext } = await nextProducts(
+      { id: productId, createdAt: createdAt },
+      pageSize
+    );
 
-  res.status(200).json({
-    data: data,
-      nextCursor: data[data.length - 1],
+    res.status(200).json({
+      data: data,
+      nextCursor: nextCursor,
+      hasNext: hasNext,
     });
   } catch (error) {
     res.status(500).json({
@@ -53,20 +45,12 @@ app.get("/users", async (req: Request, res: Response) => {
       pageSize?: string;
     };
 
-    let cursor = undefined;
-    if (userId) {
-      cursor = Number(userId);
-    }
-    let pageSizeNumber = undefined;
-    if (pageSize) {
-      pageSizeNumber = Number(pageSize);
-    }
-
-    const data = await nextUsers(cursor, pageSizeNumber);
+    const { data, nextCursor, hasNext } = await nextUsers(userId, pageSize);
 
     res.status(200).json({
       data: data,
-      nextCursor: data[data.length - 1],
+      nextCursor: nextCursor,
+      hasNext: hasNext,
     });
   } catch (error) {
     res.status(500).json({

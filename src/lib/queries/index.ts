@@ -8,38 +8,51 @@ import { eq, and, gt, or, asc } from "drizzle-orm";
 export const db = factoryDrizzleClient();
 export const nextProducts = async (
   cursor?: {
-    id: string;
-    createdAt: Date;
+    id: string | undefined;
+    createdAt: string | undefined;
   },
-  pageSize: number = 5
+  pageSize: string = "5"
 ) => {
-  const query = db
+  const pageSizeNumber = Number(pageSize);
+  const cursorDate = cursor?.createdAt ? new Date(cursor.createdAt) : undefined;
+  const cursorId = cursor?.id ? cursor.id : undefined;
+  const query = await db
     .select()
     .from(products)
     .where(
-      cursor
+      cursorId 
         ? or(
-            gt(products.createdAt, cursor.createdAt),
+            gt(products.createdAt, cursorDate as Date),
             and(
-              eq(products.createdAt, cursor.createdAt),
-              gt(products.id, cursor.id)
+              eq(products.createdAt, cursorDate as Date),
+              gt(products.id, cursorId)
             )
           )
         : undefined
     )
-    .limit(pageSize)
+    .limit(pageSizeNumber)
     .orderBy(asc(products.createdAt), asc(products.id));
 
-  return await query;
+  return {
+    data:  query,
+    nextCursor: query[query.length - 1],
+    hasNext: query.length === pageSizeNumber,
+  };
 };
 
-export const nextUsers = async (cursor?: number, pageSize = 3) => {
-  const query = db
+export const nextUsers = async (cursor?: string | undefined, pageSize = "3" ) => {
+  const cursorNumber = cursor ? Number(cursor) : undefined;
+  const pageSizeNumber = Number(pageSize);
+  const query = await db
     .select()
     .from(users)
-    .where(cursor ? gt(users.id, cursor) : undefined)
-    .limit(pageSize)
+    .where(cursorNumber ? gt(users.id, cursorNumber) : undefined)
+    .limit(pageSizeNumber)
     .orderBy(asc(users.id));
 
-  return await query;
+  return {
+    data: query,
+    nextCursor: query[query.length - 1]?.id,
+    hasNext: query.length === pageSizeNumber,
+  };
 };
