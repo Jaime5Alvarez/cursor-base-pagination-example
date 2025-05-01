@@ -3,9 +3,11 @@ import express from "express";
 import { nextProducts, nextUsers } from "@/lib/queries";
 import swaggerUi from "swagger-ui-express";
 import swaggerFile from "../swagger_output.json";
+import cors from "cors";
 
 const app: Application = express();
 app.use(express.json());
+app.use(cors());
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
