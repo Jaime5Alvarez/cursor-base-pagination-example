@@ -4,7 +4,7 @@ import postgres from "postgres";
 import * as schema from "@/modules/database/infrastructure/drizzle/schema";
 import { DATABASE_URL } from "@/config/server-constants";
 
-export class DrizzleClient {
+class DrizzleClient {
   private static instance: PostgresJsDatabase<typeof schema>;
   private static client: postgres.Sql;
 
@@ -24,4 +24,8 @@ export class DrizzleClient {
     }
     return DrizzleClient.instance;
   }
+}
+
+export function factoryDrizzleClient(): PostgresJsDatabase<typeof schema> {
+  return DrizzleClient.getInstance();
 }

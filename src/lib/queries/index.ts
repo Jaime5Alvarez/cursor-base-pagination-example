@@ -1,11 +1,11 @@
-import { DatabaseServiceFactory } from "@/modules/database/application/database-factory";
+import { factoryDrizzleClient } from "@/modules/database/infrastructure/drizzle/drizzle-client";
 import {
   products,
   users,
 } from "@/modules/database/infrastructure/drizzle/schema";
 import { eq, and, gt, or, asc } from "drizzle-orm";
 
-const db = DatabaseServiceFactory().getConnection();
+export const db = factoryDrizzleClient();
 export const nextProducts = async (
   cursor?: {
     id: string;
