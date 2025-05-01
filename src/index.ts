@@ -38,10 +38,11 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 app.get("/products", async (req: Request, res: Response) => {
-  const { productId, createdAt, pageSize } = req.query as {
-    productId?: string;
-    createdAt?: string;
-    pageSize?: string;
+  try {
+    const { productId, createdAt, pageSize } = req.query as {
+      productId?: string;
+      createdAt?: string;
+      pageSize?: string;
   };
   
   let cursor = undefined;
@@ -58,10 +59,15 @@ app.get("/products", async (req: Request, res: Response) => {
 
   const data = await nextProducts(cursor, pageSizeNumber);
 
-  res.json({
+  res.status(200).json({
     data: data,
-    nextCursor: data[data.length - 1],
-  });
+      nextCursor: data[data.length - 1],
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error,
+    });
+  }
 });
 
 app.listen(3000, () => {
