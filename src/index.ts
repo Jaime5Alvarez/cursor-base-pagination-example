@@ -9,7 +9,7 @@ const nextProducts = async (
     id: string;
     createdAt: Date;
   },
-  pageSize: number = 2
+  pageSize: number = 5
 ) => {
   const query = db
     .select()
@@ -44,21 +44,24 @@ app.get("/products", async (req: Request, res: Response) => {
     pageSize?: string;
   };
   
-  
   let cursor = undefined;
   if (productId && createdAt) {
-    cursor = { 
-      id: productId, 
-      createdAt: new Date(createdAt) 
+    cursor = {
+      id: productId,
+      createdAt: new Date(createdAt),
     };
   }
+  let pageSizeNumber = undefined;
+  if (pageSize) {
+    pageSizeNumber = Number(pageSize);
+  }
 
-  res.json(
-    await nextProducts(
-      cursor,
-      Number(pageSize)
-    )
-  );
+  const data = await nextProducts(cursor, pageSizeNumber);
+
+  res.json({
+    data: data,
+    nextCursor: data[data.length - 1],
+  });
 });
 
 app.listen(3000, () => {
