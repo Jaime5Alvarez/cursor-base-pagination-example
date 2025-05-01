@@ -1,5 +1,8 @@
 import { DatabaseServiceFactory } from "@/modules/database/application/database-factory";
-import * as schema from "@/modules/database/infrastructure/drizzle/schema";
+import {
+  products,
+  users,
+} from "@/modules/database/infrastructure/drizzle/schema";
 import { eq, and, gt, or, asc } from "drizzle-orm";
 
 const db = DatabaseServiceFactory().getConnection();
@@ -12,20 +15,31 @@ export const nextProducts = async (
 ) => {
   const query = db
     .select()
-    .from(schema.products)
+    .from(products)
     .where(
       cursor
         ? or(
-            gt(schema.products.createdAt, cursor.createdAt),
+            gt(products.createdAt, cursor.createdAt),
             and(
-              eq(schema.products.createdAt, cursor.createdAt),
-              gt(schema.products.id, cursor.id)
+              eq(products.createdAt, cursor.createdAt),
+              gt(products.id, cursor.id)
             )
           )
         : undefined
     )
     .limit(pageSize)
-    .orderBy(asc(schema.products.createdAt), asc(schema.products.id));
+    .orderBy(asc(products.createdAt), asc(products.id));
+
+  return await query;
+};
+
+export const nextUsers = async (cursor?: number, pageSize = 3) => {
+  const query = db
+    .select()
+    .from(users)
+    .where(cursor ? gt(users.id, cursor) : undefined)
+    .limit(pageSize)
+    .orderBy(asc(users.id));
 
   return await query;
 };

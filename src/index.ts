@@ -1,6 +1,6 @@
 import { type Request, type Response, type Application } from "express";
 import express from "express";
-import { nextProducts } from "@/lib/queries";
+import { nextProducts, nextUsers } from "@/lib/queries";
 import swaggerUi from "swagger-ui-express";
 import swaggerFile from "../swagger_output.json";
 
@@ -37,6 +37,35 @@ app.get("/products", async (req: Request, res: Response) => {
 
   res.status(200).json({
     data: data,
+      nextCursor: data[data.length - 1],
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error,
+    });
+  }
+});
+
+app.get("/users", async (req: Request, res: Response) => {
+  try {
+    const { userId, pageSize } = req.query as {
+      userId?: string;
+      pageSize?: string;
+    };
+
+    let cursor = undefined;
+    if (userId) {
+      cursor = Number(userId);
+    }
+    let pageSizeNumber = undefined;
+    if (pageSize) {
+      pageSizeNumber = Number(pageSize);
+    }
+
+    const data = await nextUsers(cursor, pageSizeNumber);
+
+    res.status(200).json({
+      data: data,
       nextCursor: data[data.length - 1],
     });
   } catch (error) {
