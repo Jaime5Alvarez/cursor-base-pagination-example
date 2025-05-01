@@ -4,10 +4,13 @@ import { DatabaseServiceFactory } from "./modules/database/application/database-
 import * as schema from "./modules/database/infrastructure/drizzle/schema";
 import { eq, and, gt, or, asc } from "drizzle-orm";
 const db = DatabaseServiceFactory().getConnection();
-const nextProducts = async (cursor?: {
-  id: string;
-  createdAt: Date;
-}, pageSize: number = 10) => {
+const nextProducts = async (
+  cursor?: {
+    id: string;
+    createdAt: Date;
+  },
+  pageSize: number = 2
+) => {
   const query = db
     .select()
     .from(schema.products)
@@ -35,15 +38,27 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 app.get("/products", async (req: Request, res: Response) => {
-  const { cursor } = req.query as { cursor?: {
-    id: string;
-    createdAt: Date;
-  } };
-  const { pageSize } = req.query;
-  console.log(cursor, pageSize);
+  const { productId, createdAt, pageSize } = req.query as {
+    productId?: string;
+    createdAt?: string;
+    pageSize?: string;
+  };
+  
+  
+  let cursor = undefined;
+  if (productId && createdAt) {
+    cursor = { 
+      id: productId, 
+      createdAt: new Date(createdAt) 
+    };
+  }
 
-
-  res.json(await nextProducts());
+  res.json(
+    await nextProducts(
+      cursor,
+      Number(pageSize)
+    )
+  );
 });
 
 app.listen(3000, () => {
