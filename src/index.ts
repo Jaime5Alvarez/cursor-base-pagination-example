@@ -23,7 +23,7 @@ app.get("/products", async (req: Request, res: Response) => {
 
     const { data, nextCursor, hasNext } = await nextProducts(
       { id: productId, createdAt: createdAt },
-      pageSize
+      pageSize,
     );
 
     res.status(200).json({

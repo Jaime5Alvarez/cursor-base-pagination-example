@@ -1,6 +1,6 @@
-const swaggerAutogen = require('swagger-autogen')()
+const swaggerAutogen = require("swagger-autogen")();
 
-const outputFile = './swagger_output.json'
-const endpointsFiles = ['./src/index.ts']
+const outputFile = "./swagger_output.json";
+const endpointsFiles = ["./src/index.ts"];
 
-swaggerAutogen(outputFile, endpointsFiles)
+swaggerAutogen(outputFile, endpointsFiles);

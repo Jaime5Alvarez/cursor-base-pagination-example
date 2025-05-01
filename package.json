@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "bun run --watch src/index.ts",
-    "swagger-autogen": "bun swagger.js"
+    "swagger-autogen": "bun swagger.js",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -26,6 +27,7 @@
     "express": "^5.1.0",
     "pg": "^8.15.6",
     "postgres": "^3.4.5",
+    "prettier": "^3.5.3",
     "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.1"
   }

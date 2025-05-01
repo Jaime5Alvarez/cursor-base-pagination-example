@@ -11,7 +11,7 @@ export const nextProducts = async (
     id: string | undefined;
     createdAt: string | undefined;
   },
-  pageSize: string = "5"
+  pageSize: string = "5",
 ) => {
   const pageSizeNumber = Number(pageSize);
   const cursorDate = cursor?.createdAt ? new Date(cursor.createdAt) : undefined;
@@ -20,27 +20,30 @@ export const nextProducts = async (
     .select()
     .from(products)
     .where(
-      cursorId 
+      cursorId
         ? or(
             gt(products.createdAt, cursorDate as Date),
             and(
               eq(products.createdAt, cursorDate as Date),
-              gt(products.id, cursorId)
-            )
+              gt(products.id, cursorId),
+            ),
           )
-        : undefined
+        : undefined,
     )
     .limit(pageSizeNumber)
     .orderBy(asc(products.createdAt), asc(products.id));
 
   return {
-    data:  query,
+    data: query,
     nextCursor: query[query.length - 1],
     hasNext: query.length === pageSizeNumber,
   };
 };
 
-export const nextUsers = async (cursor?: string | undefined, pageSize = "3" ) => {
+export const nextUsers = async (
+  cursor?: string | undefined,
+  pageSize = "3",
+) => {
   const cursorNumber = cursor ? Number(cursor) : undefined;
   const pageSizeNumber = Number(pageSize);
   const query = await db

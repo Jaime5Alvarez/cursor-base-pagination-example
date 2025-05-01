@@ -35,4 +35,3 @@ To generate the migrations:
 ```bash
 bun run drizzle-kit generate
 ```
-
